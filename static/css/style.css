@@ -1,0 +1,158 @@
+/* static/css/style.css
+.resumen-contenido {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
+.resumen-contenido p,
+.resumen-contenido li {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .resumen-contenido {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .accordion-body {
+        padding: 10px;
+    }
+} */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #34495e;
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2980b9;
+}
+
+.asignatura-card,
+.evaluacion-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    background-color: #fff;
+}
+
+.asignatura-card:hover,
+.evaluacion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link {
+    color: #2c3e50;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #3498db;
+    color: #fff;
+    border-color: #3498db;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #ecf0f1;
+    color: #2980b9;
+}
+
+.tema-contenido {
+    line-height: 1.7;
+    color: #34495e;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    font-size: 16px;
+}
+
+.tema-contenido p,
+.tema-contenido li {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.btn-success {
+    background-color: #27ae60;
+    border-color: #27ae60;
+}
+
+.btn-success:hover {
+    background-color: #219653;
+    border-color: #219653;
+}
+
+.btn-outline-secondary {
+    color: #7f8c8d;
+    border-color: #7f8c8d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+.resultado {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .tema-contenido {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 10px;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}

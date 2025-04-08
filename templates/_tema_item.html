@@ -1,0 +1,30 @@
+<div class="accordion-item">
+    <h2 class="accordion-header" id="heading-{{ tema['id'] }}">
+        <button class="{{ tema['accordion_classes'] }}" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse-{{ tema['id'] }}" aria-expanded="{{ tema['aria_expanded'] }}"
+            aria-controls="collapse-{{ tema['id'] }}">
+            {{ tema['titulo'] }}
+        </button>
+    </h2>
+    <div id="collapse-{{ tema['id'] }}" class="accordion-collapse collapse {{ tema['collapse_show'] }}"
+        aria-labelledby="heading-{{ tema['id'] }}" data-bs-parent="#temasAccordion">
+        <div class="accordion-body">
+            <div class="tema-contenido" id="tema-{{ tema['id'] }}" data-markdown="{{ tema['contenido'] | escape }}">
+            </div>
+            <button class="btn btn-secondary btn-sm mt-2 export-pdf" data-tema-id="{{ tema['id'] }}"><i
+                    class="fas fa-download me-2"></i> Descargar PDF</button>
+            {% if tema['es_fijo'] == 0 and tema['usuario_id'] == current_user.id %}
+            <div class="mt-3">
+                <a href="{{ url_for('editar_tema', asignatura_id=asignatura_id, tema_id=tema['id']) }}"
+                    class="btn btn-warning btn-sm me-2"><i class="fas fa-edit me-2"></i> Editar</a>
+                <form method="POST"
+                    action="{{ url_for('eliminar_tema', asignatura_id=asignatura_id, tema_id=tema['id']) }}"
+                    class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar este tema?');">
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash me-2"></i>
+                        Eliminar</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

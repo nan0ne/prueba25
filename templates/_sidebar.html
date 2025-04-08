@@ -1,0 +1,10 @@
+<div class="sidebar">
+    <ul class="nav flex-column">
+        {% for asignatura in asignaturas %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('mostrar_asignatura', asignatura_id=asignatura.id) }}">{{
+                asignatura.nombre }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

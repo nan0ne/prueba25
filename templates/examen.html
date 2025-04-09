@@ -1,26 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="{{ 'dark' if navbar_data.dark_mode else 'light' }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ examen['titulo'] }} - UNED Mayores de 25</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>{{ examen['nombre'] }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body class="{% if navbar_data.dark_mode %}dark-mode{% endif %}">
+<body>
     {% include '_navbar.html' %}
     {% include '_sidebar.html' %}
-    <div class="content">
-        <h1 class="mb-4"><i class="fas fa-clipboard-check me-2"></i> {{ examen['titulo'] }}</h1>
-
+    <main class="content">
+        <h1 class="text-2xl font-semibold mb-6">{{ examen['nombre'] }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -28,98 +23,80 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-
         {% if resultado %}
-        <div id="examen-resultados">
-            <h3 class="mt-4">Resultados</h3>
-            {% if porcentaje_acierto is not none %}
-            <p><strong>Porcentaje de acierto:</strong> {{ porcentaje_acierto|round(2) }}%</p>
-            {% endif %}
+        <div id="examen-resultados" class="card mb-6 max-w-3xl">
+            <h2 class="text-lg font-semibold mb-3">Resultados</h2>
+            <p class="text-sm mb-3">Porcentaje de acierto: {{ "%.2f"|format(porcentaje_acierto) }}%</p>
             {% for res in resultado %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ loop.index }}. {{ res.texto }}</h5>
-                    <div class="list-group">
-                        {% for opcion in res.opciones %}
-                        <div
-                            class="list-group-item {% if opcion.id in res.correctas %}correct-answer{% endif %} {% if opcion.id in res.seleccionadas %}user-answer{% endif %}">
-                            {{ opcion.texto }} {% if opcion.id in res.correctas %}(Correcta){% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <p class="mt-2">{{ 'Correcta' if res.es_correcta else 'Incorrecta' }}</p>
-                </div>
+            <div class="mb-4">
+                <p class="font-medium mb-1">{{ res['texto'] }}</p>
+                <p class="text-sm mb-1">Aciertos: {{ res['aciertos'] }} de {{ res['total_correctas'] }}</p>
+                <ul class="text-sm space-y-1">
+                    {% for opcion in res['opciones'] %}
+                    <li
+                        class="{% if opcion['id'] in res['correctas'] and opcion['id'] in res['seleccionadas'] %}text-green-600 dark:text-green-400{% elif opcion['id'] in res['correctas'] %}text-blue-600 dark:text-blue-400{% elif opcion['id'] in res['seleccionadas'] %}text-red-600 dark:text-red-400{% endif %}">
+                        {{ opcion['texto'] }}
+                        {% if opcion['id'] in res['seleccionadas'] %}(Seleccionada){% endif %}
+                        {% if opcion['id'] in res['correctas'] %}(Correcta){% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
             {% endfor %}
+            <div class="flex space-x-4 mt-4">
+                <button class="btn btn-primary export-examen-pdf"><i class="fas fa-file-pdf mr-2"></i> Exportar a
+                    PDF</button>
+                <a href="{{ url_for('mostrar_examen', examen_id=examen['id']) }}" class="btn btn-primary"><i
+                        class="fas fa-redo mr-2"></i> Reintentar</a>
+            </div>
         </div>
-        <div class="mt-3">
-            <button class="btn btn-primary export-examen-pdf"><i class="fas fa-file-pdf me-2"></i> Exportar a
-                PDF</button>
-            <a href="{{ url_for('mostrar_examen', examen_id=examen.id) }}" class="btn btn-primary ms-2"><i
-                    class="fas fa-redo me-2"></i> Volver a intentar</a>
-        </div>
+
         {% else %}
-        <form id="examen-form" method="POST">
-            {% for pregunta in examen.preguntas %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ loop.index }}. {{ pregunta.texto }}</h5>
-                    <div class="list-group">
-                        {% for opcion in pregunta.opciones %}
-                        <label class="list-group-item">
-                            <input type="checkbox" name="pregunta_{{ pregunta.id }}" value="{{ opcion.id }}">
-                            {{ opcion.texto }}
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
+        <form method="POST" id="examen-form" class="card max-w-3xl">
+            {% for pregunta in examen['preguntas'] %}
+            <div class="mb-4">
+                <p class="font-medium mb-2">{{ pregunta['texto'] }}</p>
+                {% for opcion in pregunta['opciones'] %}
+                <label class="block text-sm mb-1">
+                    <input type="checkbox" name="pregunta_{{ pregunta['id'] }}" value="{{ opcion['id'] }}" class="mr-2">
+                    {{ opcion['texto'] }}
+                </label>
+                {% endfor %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary"><i class="fas fa-check me-2"></i> Enviar examen</button>
+            <button type="submit" class="btn btn-primary">Enviar Respuestas</button>
         </form>
         {% endif %}
-
         {% if intentos %}
-        <h3 class="mt-5">Historial de intentos (Últimos 10)</h3>
-        <div class="card">
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Porcentaje de acierto</th>
-                            <th>Correctas</th>
-                            <th>Incorrectas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for intento in intentos %}
-                        <tr>
-                            <td>{{ intento.fecha }}</td>
-                            <td>{{ intento.porcentaje_acierto|round(2) }}%</td>
-                            <td>{{ intento.respuestas_correctas }}</td>
-                            <td>{{ intento.respuestas_incorrectas }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <form id="reset-intentos-form" method="POST"
-                    action="{{ url_for('resetear_intentos', examen_id=examen.id) }}">
-                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash me-2"></i> Resetear
-                        intentos</button>
-                </form>
-            </div>
+        <div class="card mt-6 max-w-3xl">
+            <h2 class="text-lg font-semibold mb-3">Historial de Intentos</h2>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-[var(--border)]">
+                        <th class="p-2 text-left">Fecha</th>
+                        <th class="p-2 text-left">Acierto</th>
+                        <th class="p-2 text-left">Correctas</th>
+                        <th class="p-2 text-left">Incorrectas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for intento in intentos %}
+                    <tr class="border-b border-[var(--border)]">
+                        <td class="p-2">{{ intento['fecha'] }}</td>
+                        <td class="p-2">{{ intento['porcentaje_acierto'] }}%</td>
+                        <td class="p-2">{{ intento['respuestas_correctas'] }}</td>
+                        <td class="p-2">{{ intento['respuestas_incorrectas'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <form method="POST" action="{{ url_for('resetear_intentos', examen_id=examen['id']) }}" class="mt-4">
+                <button type="submit" class="btn btn-danger"><i class="fas fa-trash mr-2"></i> Borrar Historial</button>
+            </form>
         </div>
         {% endif %}
-    </div>
-    <a href="{{ url_for('index') }}" class="fixed-home-btn"><i class="fas fa-home"></i></a>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 

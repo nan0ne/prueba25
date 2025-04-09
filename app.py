@@ -1,5 +1,4 @@
 import sqlite3
-from contextlib import closing
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import (
     LoginManager,
@@ -9,9 +8,11 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from werkzeug.security import generate_password_hash, check_password_hash
-import socket
+from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+from contextlib import closing
+import socket
+from init_db import init_db, get_db_connection
 
 app = Flask(__name__)
 app.secret_key = "tu_clave_secreta_aqui"
@@ -34,51 +35,18 @@ class User(UserMixin):
 def load_user(user_id):
     with closing(get_db_connection()) as conn:
         user = conn.execute(
-            "SELECT * FROM usuarios WHERE id = ?", (user_id,)
+            "SELECT id, username FROM usuarios WHERE id = ?", (user_id,)
         ).fetchone()
         return User(user["id"], user["username"]) if user else None
 
 
-def get_db_connection():
-    conn = sqlite3.connect("database.db", check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    with closing(get_db_connection()) as conn:
-        # Crear la tabla si no existe
-        conn.execute(
-            """CREATE TABLE IF NOT EXISTS intentos_examen (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            usuario_id INTEGER,
-            examen_id INTEGER,
-            porcentaje_acierto REAL,
-            fecha TEXT,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-            FOREIGN KEY (examen_id) REFERENCES examenes(id)
-        )"""
-        )
-        # Añadir columnas nuevas si no existen
-        try:
-            conn.execute(
-                "ALTER TABLE intentos_examen ADD COLUMN respuestas_correctas INTEGER DEFAULT 0"
-            )
-        except sqlite3.OperationalError:
-            pass  # Ignorar si ya existe
-        try:
-            conn.execute(
-                "ALTER TABLE intentos_examen ADD COLUMN respuestas_incorrectas INTEGER DEFAULT 0"
-            )
-        except sqlite3.OperationalError:
-            pass  # Ignorar si ya existe
-        conn.commit()
-
-
-def get_asignaturas():
+def fetch_asignaturas():
     with closing(get_db_connection()) as conn:
         return [
-            dict(row) for row in conn.execute("SELECT * FROM asignaturas").fetchall()
+            dict(row)
+            for row in conn.execute(
+                "SELECT id, nombre, descripcion FROM asignaturas"
+            ).fetchall()
         ]
 
 
@@ -92,8 +60,10 @@ def get_navbar_data():
 
 @app.route("/")
 def index():
+    navbar_data = get_navbar_data()
+    asignaturas = fetch_asignaturas()
     return render_template(
-        "index.html", asignaturas=get_asignaturas(), navbar_data=get_navbar_data()
+        "index.html", navbar_data=navbar_data, asignaturas=asignaturas
     )
 
 
@@ -105,14 +75,15 @@ def login():
         if username and password:
             with closing(get_db_connection()) as conn:
                 user = conn.execute(
-                    "SELECT * FROM usuarios WHERE username = ?", (username,)
+                    "SELECT id, username, password FROM usuarios WHERE username = ?",
+                    (username,),
                 ).fetchone()
                 if user and check_password_hash(user["password"], password):
                     login_user(User(user["id"], user["username"]))
                     return redirect(url_for("index"))
                 flash("Usuario o contraseña incorrectos", "danger")
     return render_template(
-        "login.html", asignaturas=get_asignaturas(), navbar_data=get_navbar_data()
+        "login.html", asignaturas=fetch_asignaturas(), navbar_data=get_navbar_data()
     )
 
 
@@ -129,13 +100,13 @@ def register():
             and username.isalnum()
         ):
             flash(
-                "El usuario debe tener al menos 4 caracteres alfanuméricos y la contraseña 8 caracteres.",
+                "Usuario: mínimo 4 caracteres alfanuméricos. Contraseña: mínimo 8 caracteres.",
                 "danger",
             )
         else:
             with closing(get_db_connection()) as conn:
                 if conn.execute(
-                    "SELECT * FROM usuarios WHERE username = ?", (username,)
+                    "SELECT 1 FROM usuarios WHERE username = ?", (username,)
                 ).fetchone():
                     flash("El usuario ya existe.", "danger")
                 else:
@@ -145,9 +116,10 @@ def register():
                         (username, hashed_password),
                     )
                     conn.commit()
+                    flash("Registro exitoso. Por favor, inicia sesión.", "success")
                     return redirect(url_for("login"))
     return render_template(
-        "register.html", asignaturas=get_asignaturas(), navbar_data=get_navbar_data()
+        "register.html", asignaturas=fetch_asignaturas(), navbar_data=get_navbar_data()
     )
 
 
@@ -162,14 +134,14 @@ def logout():
 def mostrar_asignatura(asignatura_id):
     with closing(get_db_connection()) as conn:
         asignatura = conn.execute(
-            "SELECT * FROM asignaturas WHERE id = ?", (asignatura_id,)
+            "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
         ).fetchone()
         if not asignatura:
             return redirect(url_for("index"))
     return render_template(
         "asignatura_menu.html",
-        asignatura=asignatura,
-        asignaturas=get_asignaturas(),
+        asignatura=dict(asignatura),
+        asignaturas=fetch_asignaturas(),
         navbar_data=get_navbar_data(),
     )
 
@@ -177,45 +149,148 @@ def mostrar_asignatura(asignatura_id):
 @app.route("/asignatura/<int:asignatura_id>/temas")
 def mostrar_temas(asignatura_id):
     with closing(get_db_connection()) as conn:
-        asignatura = conn.execute(
-            "SELECT * FROM asignaturas WHERE id = ?", (asignatura_id,)
+        asignatura_row = conn.execute(
+            "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
         ).fetchone()
-        if not asignatura:
+        if not asignatura_row:
             return redirect(url_for("index"))
+        asignatura = dict(asignatura_row)
         temas = [
             dict(row)
             for row in conn.execute(
-                "SELECT * FROM temas WHERE asignatura_id = ?", (asignatura_id,)
+                "SELECT id, titulo, contenido, usuario_id, es_fijo FROM temas WHERE asignatura_id = ? ORDER BY id ASC",
+                (asignatura_id,),
             ).fetchall()
         ]
     return render_template(
         "temas.html",
         asignatura=asignatura,
         temas=temas,
-        asignaturas=get_asignaturas(),
+        asignaturas=fetch_asignaturas(),
         navbar_data=get_navbar_data(),
     )
+
+
+@app.route("/asignatura/<int:asignatura_id>/agregar_tema", methods=["GET", "POST"])
+@login_required
+def agregar_tema(asignatura_id):
+    with closing(get_db_connection()) as conn:
+        asignatura_row = conn.execute(
+            "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
+        ).fetchone()
+        if not asignatura_row:
+            return redirect(url_for("index"))
+        asignatura = dict(asignatura_row)
+    if request.method == "POST":
+        titulo = request.form.get("titulo")
+        contenido = request.form.get("contenido")
+        if titulo and contenido:
+            with closing(get_db_connection()) as conn:
+                conn.execute(
+                    "INSERT INTO temas (asignatura_id, usuario_id, titulo, contenido, es_fijo) VALUES (?, ?, ?, ?, ?)",
+                    (asignatura_id, current_user.id, titulo, contenido, 0),
+                )
+                conn.commit()
+                flash("Tema agregado con éxito.", "success")
+                return redirect(url_for("mostrar_temas", asignatura_id=asignatura_id))
+        flash("Título y contenido son obligatorios.", "danger")
+    return render_template(
+        "agregar_tema.html",
+        asignatura_id=asignatura_id,
+        asignatura=asignatura,
+        asignaturas=fetch_asignaturas(),
+        navbar_data=get_navbar_data(),
+    )
+
+
+@app.route(
+    "/asignatura/<int:asignatura_id>/editar_tema/<int:tema_id>", methods=["GET", "POST"]
+)
+@login_required
+def editar_tema(asignatura_id, tema_id):
+    with closing(get_db_connection()) as conn:
+        asignatura_row = conn.execute(
+            "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
+        ).fetchone()
+        tema_row = conn.execute(
+            "SELECT id, asignatura_id, usuario_id, titulo, contenido, es_fijo FROM temas WHERE id = ? AND asignatura_id = ?",
+            (tema_id, asignatura_id),
+        ).fetchone()
+        if not asignatura_row or not tema_row:
+            return redirect(url_for("index"))
+        asignatura = dict(asignatura_row)
+        tema = dict(tema_row)
+        if tema["usuario_id"] != current_user.id or tema["es_fijo"] == 1:
+            flash("No tienes permiso para editar este tema.", "danger")
+            return redirect(url_for("mostrar_temas", asignatura_id=asignatura_id))
+    if request.method == "POST":
+        titulo = request.form.get("titulo")
+        contenido = request.form.get("contenido")
+        if titulo and contenido:
+            with closing(get_db_connection()) as conn:
+                conn.execute(
+                    "UPDATE temas SET titulo = ?, contenido = ? WHERE id = ? AND usuario_id = ?",
+                    (titulo, contenido, tema_id, current_user.id),
+                )
+                conn.commit()
+                flash("Tema actualizado con éxito.", "success")
+                return redirect(url_for("mostrar_temas", asignatura_id=asignatura_id))
+        flash("Título y contenido son obligatorios.", "danger")
+    return render_template(
+        "editar_tema.html",
+        asignatura_id=asignatura_id,
+        asignatura=asignatura,
+        tema=tema,
+        asignaturas=fetch_asignaturas(),
+        navbar_data=get_navbar_data(),
+    )
+
+
+@app.route(
+    "/asignatura/<int:asignatura_id>/eliminar_tema/<int:tema_id>", methods=["POST"]
+)
+@login_required
+def eliminar_tema(asignatura_id, tema_id):
+    with closing(get_db_connection()) as conn:
+        tema_row = conn.execute(
+            "SELECT usuario_id, es_fijo FROM temas WHERE id = ? AND asignatura_id = ?",
+            (tema_id, asignatura_id),
+        ).fetchone()
+        if not tema_row or (
+            tema_row["usuario_id"] != current_user.id or tema_row["es_fijo"] == 1
+        ):
+            flash("No tienes permiso para eliminar este tema.", "danger")
+        else:
+            conn.execute(
+                "DELETE FROM temas WHERE id = ? AND usuario_id = ?",
+                (tema_id, current_user.id),
+            )
+            conn.commit()
+            flash("Tema eliminado con éxito.", "success")
+    return redirect(url_for("mostrar_temas", asignatura_id=asignatura_id))
 
 
 @app.route("/asignatura/<int:asignatura_id>/examenes")
 def mostrar_examenes(asignatura_id):
     with closing(get_db_connection()) as conn:
-        asignatura = conn.execute(
-            "SELECT * FROM asignaturas WHERE id = ?", (asignatura_id,)
+        asignatura_row = conn.execute(
+            "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
         ).fetchone()
-        if not asignatura:
+        if not asignatura_row:
             return redirect(url_for("index"))
+        asignatura = dict(asignatura_row)
         examenes = [
             dict(row)
             for row in conn.execute(
-                "SELECT * FROM examenes WHERE asignatura_id = ?", (asignatura_id,)
+                "SELECT id, nombre FROM examenes WHERE asignatura_id = ?",
+                (asignatura_id,),
             ).fetchall()
         ]
     return render_template(
         "examenes.html",
         asignatura=asignatura,
         examenes=examenes,
-        asignaturas=get_asignaturas(),
+        asignaturas=fetch_asignaturas(),
         navbar_data=get_navbar_data(),
     )
 
@@ -224,99 +299,128 @@ def mostrar_examenes(asignatura_id):
 @login_required
 def mostrar_examen(examen_id):
     with closing(get_db_connection()) as conn:
-        examen = conn.execute(
-            "SELECT * FROM examenes WHERE id = ?", (examen_id,)
+        examen_row = conn.execute(
+            "SELECT id, nombre, asignatura_id FROM examenes WHERE id = ?", (examen_id,)
         ).fetchone()
-        if not examen:
+        if not examen_row:
             return redirect(url_for("index"))
-        examen = dict(examen)
+        examen = dict(examen_row)
         preguntas = [
             dict(row)
             for row in conn.execute(
-                "SELECT * FROM preguntas WHERE examen_id = ?", (examen_id,)
+                "SELECT id, texto FROM preguntas WHERE examen_id = ?", (examen_id,)
             ).fetchall()
         ]
         for pregunta in preguntas:
             pregunta["opciones"] = [
                 dict(row)
                 for row in conn.execute(
-                    "SELECT * FROM opciones WHERE pregunta_id = ?", (pregunta["id"],)
+                    "SELECT id, texto, es_correcta FROM opciones WHERE pregunta_id = ?",
+                    (pregunta["id"],),
                 ).fetchall()
             ]
-            pregunta["respuestas_correctas"] = [
-                op["id"] for op in pregunta["opciones"] if op["es_correcta"]
-            ]
         examen["preguntas"] = preguntas
+
         intentos = [
             dict(row)
             for row in conn.execute(
-                "SELECT * FROM intentos_examen WHERE usuario_id = ? AND examen_id = ? ORDER BY fecha DESC LIMIT 10",
+                """
+                SELECT id, porcentaje_acierto, respuestas_correctas, respuestas_incorrectas, fecha
+                FROM intentos_examen
+                WHERE usuario_id = ? AND examen_id = ?
+                ORDER BY fecha DESC
+                """,
                 (current_user.id, examen_id),
             ).fetchall()
         ]
 
-    resultado = None
-    porcentaje_acierto = None
-    if request.method == "POST":
-        respuestas_usuario = {}
-        for key, values in request.form.lists():
-            if key.startswith("pregunta_"):
-                pregunta_id = int(key.split("_")[1])
-                respuestas_usuario[pregunta_id] = [
-                    int(v) for v in values if v.isdigit()
+        if request.method == "POST":
+            resultado = []
+            total_correctas = 0  # Total de opciones correctas en el examen
+            aciertos = 0  # Opciones correctas seleccionadas
+            fallos = 0  # Opciones incorrectas seleccionadas
+
+            for pregunta in examen["preguntas"]:
+                seleccionadas = request.form.getlist(f"pregunta_{pregunta['id']}")
+                seleccionadas = [int(s) for s in seleccionadas]
+                correctas = [
+                    opcion["id"]
+                    for opcion in pregunta["opciones"]
+                    if opcion["es_correcta"]
                 ]
+                total_correctas += len(correctas)
 
-        total_preguntas = len(examen["preguntas"])
-        aciertos = 0
-        resultado = []
-        for pregunta in examen["preguntas"]:
-            correctas = set(pregunta["respuestas_correctas"])
-            seleccionadas = set(respuestas_usuario.get(pregunta["id"], []))
-            es_correcta = correctas == seleccionadas
-            if es_correcta:
-                aciertos += 1
-            resultado.append(
-                {
-                    "texto": pregunta["texto"],
-                    "opciones": pregunta["opciones"],
-                    "correctas": correctas,
-                    "seleccionadas": seleccionadas,
-                    "es_correcta": es_correcta,
-                }
+                # Contar aciertos y fallos por pregunta
+                aciertos_pregunta = sum(1 for c in correctas if c in seleccionadas)
+                fallos_pregunta = sum(1 for s in seleccionadas if s not in correctas)
+                aciertos += aciertos_pregunta
+                fallos += fallos_pregunta
+
+                resultado.append(
+                    {
+                        "texto": pregunta["texto"],
+                        "opciones": pregunta["opciones"],
+                        "seleccionadas": seleccionadas,
+                        "correctas": correctas,
+                        "aciertos": aciertos_pregunta,
+                        "fallos": fallos_pregunta,
+                        "total_correctas": len(correctas),
+                    }
+                )
+
+            # Calcular porcentaje: (aciertos / total_correctas) * 100, penalizando fallos si prefieres
+            porcentaje_acierto = (
+                (aciertos / total_correctas) * 100 if total_correctas > 0 else 0
             )
+            porcentaje_acierto = round(porcentaje_acierto, 2)
 
-        porcentaje_acierto = (
-            (aciertos / total_preguntas) * 100 if total_preguntas > 0 else 0
-        )
-        respuestas_incorrectas = total_preguntas - aciertos
-        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with closing(get_db_connection()) as conn:
             conn.execute(
-                "INSERT INTO intentos_examen (usuario_id, examen_id, porcentaje_acierto, respuestas_correctas, respuestas_incorrectas, fecha) VALUES (?, ?, ?, ?, ?, ?)",
+                """
+                INSERT INTO intentos_examen (
+                    usuario_id, examen_id, porcentaje_acierto, respuestas_correctas, respuestas_incorrectas
+                ) VALUES (?, ?, ?, ?, ?)
+                """,
                 (
                     current_user.id,
                     examen_id,
                     porcentaje_acierto,
                     aciertos,
-                    respuestas_incorrectas,
-                    fecha,
+                    fallos,
                 ),
             )
             conn.commit()
-        flash(
-            f"Examen enviado. Porcentaje de acierto: {porcentaje_acierto:.2f}%",
-            "success",
+            return render_template(
+                "examen.html",
+                examen=examen,
+                resultado=resultado,
+                porcentaje_acierto=porcentaje_acierto,
+                intentos=fetch_intentos(examen_id),
+                navbar_data=get_navbar_data(),
+            )
+
+        return render_template(
+            "examen.html",
+            examen=examen,
+            intentos=fetch_intentos(examen_id),
+            navbar_data=get_navbar_data(),
         )
 
-    return render_template(
-        "examen.html",
-        examen=examen,
-        asignaturas=get_asignaturas(),
-        navbar_data=get_navbar_data(),
-        intentos=intentos,
-        resultado=resultado,
-        porcentaje_acierto=porcentaje_acierto,
-    )
+
+def fetch_intentos(examen_id):
+    with closing(get_db_connection()) as conn:
+        intentos = [
+            dict(row)
+            for row in conn.execute(
+                """
+                SELECT id, porcentaje_acierto, respuestas_correctas, respuestas_incorrectas, fecha
+                FROM intentos_examen
+                WHERE usuario_id = ? AND examen_id = ?
+                ORDER BY fecha DESC
+                """,
+                (current_user.id, examen_id),
+            ).fetchall()
+        ]
+    return intentos
 
 
 @app.route("/examen/<int:examen_id>/resetear_intentos", methods=["POST"])
@@ -350,7 +454,7 @@ def find_free_port(start_port=5000):
 
 
 if __name__ == "__main__":
-    init_db()  # Inicializa o actualiza la base de datos
+    init_db()
     port = find_free_port(5000)
     print(f"Starting server on port {port}...")
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port)

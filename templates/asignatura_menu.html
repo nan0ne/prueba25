@@ -1,58 +1,34 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="{{ 'dark' if navbar_data.dark_mode else 'light' }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ asignatura['nombre'] }} - UNED Mayores de 25</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>{{ asignatura['nombre'] }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body class="{% if navbar_data.dark_mode %}dark-mode{% endif %}">
+<body>
     {% include '_navbar.html' %}
     {% include '_sidebar.html' %}
-    <div class="content">
-        <h1 class="mb-4"><i class="fas fa-book me-2"></i> {{ asignatura['nombre'] }}</h1>
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Temas</h5>
-                        <a href="{{ url_for('mostrar_temas', asignatura_id=asignatura['id']) }}"
-                            class="btn btn-primary w-100">
-                            <i class="fas fa-book-open me-2"></i> Ver temas
-                        </a>
-                    </div>
-                </div>
+    <main class="content">
+        <h1 class="text-2xl font-semibold mb-6">{{ asignatura['nombre'] }}</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
+            <div class="card">
+                <h2 class="text-lg font-semibold mb-2">Temas</h2>
+                <a href="{{ url_for('mostrar_temas', asignatura_id=asignatura['id']) }}" class="btn btn-primary">Ver
+                    Temas</a>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Exámenes</h5>
-                        <a href="{{ url_for('mostrar_examenes', asignatura_id=asignatura['id']) }}"
-                            class="btn btn-primary w-100">
-                            <i class="fas fa-clipboard-check me-2"></i> Ver exámenes
-                        </a>
-                    </div>
-                </div>
+            <div class="card">
+                <h2 class="text-lg font-semibold mb-2">Exámenes</h2>
+                <a href="{{ url_for('mostrar_examenes', asignatura_id=asignatura['id']) }}" class="btn btn-primary">Ver
+                    Exámenes</a>
             </div>
         </div>
-    </div>
-    <a href="{{ url_for('index') }}" class="fixed-home-btn"><i class="fas fa-home"></i></a>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </main>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 

@@ -1,43 +1,22 @@
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}"><i class="fas fa-graduation-cap me-2"></i> UNED Mayores de
-            25</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                {% if navbar_data.is_authenticated %}
-                <li class="nav-item">
-                    <span class="nav-link">Hola, {{ navbar_data.username }}</span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Cerrar
-                        sesión</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt me-2"></i> Iniciar
-                        sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('register') }}"><i class="fas fa-user-plus me-2"></i>
-                        Registrarse</a>
-                </li>
-                {% endif %}
-                <li class="nav-item">
-                    <form method="POST" action="{{ url_for('toggle_theme') }}">
-                        <button type="submit" class="nav-link btn btn-link">
-                            {% if navbar_data.dark_mode %}
-                            <i class="fas fa-sun me-1"></i> Claro
-                            {% else %}
-                            <i class="fas fa-moon me-1"></i> Oscuro
-                            {% endif %}
-                        </button>
-                    </form>
-                </li>
-            </ul>
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="{{ url_for('index') }}" class="navbar-brand">UNED Mayores 25</a>
+        <div class="navbar-menu">
+            {% if navbar_data.is_authenticated %}
+            <span class="text-sm font-medium">Hola, {{ navbar_data.username }}</span>
+            <a href="{{ url_for('logout') }}" class="navbar-btn navbar-btn-secondary">Cerrar Sesión</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="navbar-btn navbar-btn-primary">Iniciar Sesión</a>
+            <a href="{{ url_for('register') }}" class="navbar-btn navbar-btn-secondary">Registrarse</a>
+            {% endif %}
+            <form method="POST" action="{{ url_for('toggle_theme') }}">
+                <button type="submit" class="navbar-btn navbar-btn-secondary" title="Cambiar tema">
+                    <i class="fas fa-{{ 'moon' if navbar_data.dark_mode else 'sun' }}"></i>
+                </button>
+            </form>
+            <button id="sidebar-toggle" class="navbar-btn navbar-btn-secondary md:hidden">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </div>
 </nav>

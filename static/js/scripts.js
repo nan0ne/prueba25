@@ -1,67 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Validación del formulario de examen solo al enviar
-    const examenForm = document.querySelector('#examen-form');
-    if (examenForm) {
-        examenForm.addEventListener('submit', (e) => {
-            const checkboxes = examenForm.querySelectorAll('input[type="checkbox"]:checked');
-            if (checkboxes.length === 0) {
-                e.preventDefault();
-                alert('Por favor, selecciona al menos una opción antes de enviar el examen.');
-            }
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
         });
     }
 
-    // Confirmación para resetear intentos
-    const resetForm = document.querySelector('#reset-intentos-form');
-    if (resetForm) {
-        resetForm.addEventListener('submit', (e) => {
-            if (!confirm('¿Seguro que quieres resetear tus intentos?')) {
-                e.preventDefault();
-            }
-        });
-    }
-
-    // Procesar Markdown en temas de manera eficiente
     document.querySelectorAll('.tema-contenido').forEach(element => {
-        const markdown = element.dataset.markdown;
+        const markdown = element.getAttribute('data-markdown');
         if (markdown) {
-            element.innerHTML = marked.parse(markdown, { breaks: true, gfm: true });
+            console.log(`Rendering tema-${element.id}:`, markdown);
+            element.innerHTML = ''; // Limpia para evitar duplicados
+            element.innerHTML = marked.parse(markdown);
         }
     });
 
-    // Exportar temas a PDF
-    document.querySelectorAll('.export-tema-pdf').forEach(button => {
+    document.querySelectorAll('.export-pdf').forEach(button => {
         button.addEventListener('click', () => {
-            const temaId = button.dataset.temaId;
-            const element = document.getElementById(`tema-${temaId}`);
-            html2pdf()
-                .set({
-                    margin: 1,
-                    filename: `tema_${temaId}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                })
-                .from(element)
-                .save();
+            const temaId = button.getAttribute('data-tema-id');
+            const element = document.getElementById(`tema-${temaId}`).parentElement;
+            html2pdf().from(element).save(`tema-${temaId}.pdf`);
         });
     });
 
-    // Exportar resultados de examen a PDF
-    const exportExamenBtn = document.querySelector('.export-examen-pdf');
-    if (exportExamenBtn) {
-        exportExamenBtn.addEventListener('click', () => {
-            const element = document.getElementById('examen-resultados');
-            html2pdf()
-                .set({
-                    margin: 1,
-                    filename: `examen_resultados.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                })
-                .from(element)
-                .save();
+    const exportExamenButton = document.querySelector('.export-examen-pdf');
+    if (exportExamenButton) {
+        exportExamenButton.addEventListener('click', () => {
+            const resultados = document.getElementById('examen-resultados');
+            html2pdf().from(resultados).save('resultados-examen.pdf');
         });
     }
 });

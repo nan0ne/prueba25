@@ -1,12 +1,15 @@
 import sqlite3
+import os
+from flask import current_app
 from contextlib import closing
 from werkzeug.security import generate_password_hash
 
-DB_PATH = "database.db"
+# DB_PATH = os.path.join(current_app.root_path, "instance", "database.db")
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    db_path = os.path.join(current_app.root_path, "instance", "database.db")
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 

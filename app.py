@@ -1,4 +1,3 @@
-import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import (
     LoginManager,
@@ -454,7 +453,8 @@ def find_free_port(start_port=5000):
 
 
 if __name__ == "__main__":
-    init_db()
+    with app.app_context():
+        init_db()
     port = find_free_port(5000)
     print(f"Starting server on port {port}...")
     app.run(debug=True, host="0.0.0.0", port=port)

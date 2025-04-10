@@ -205,18 +205,22 @@ Un texto es un acto de comunicación que transmite un mensaje coherente y autón
                 None,
                 "Puntos clave: ¿Qué es un texto?",
                 """
-# Puntos clave: ¿Qué es un texto?
-- **Definición**: Comunicación coherente y autónoma.
-- **Tipos**: Oral o escrito; simple ("¡Socorro!") o complejo (ensayos).
-- **Elementos**:
-  - Emisor: Perspectiva temporal-espacial.
-  - Receptor: Conocido o público general.
-  - Mensaje: Interpretable.
-- **Estructura**:
-  - Micro: Detalles.
-  - Macro: Ideas principales.
-  - Super: Género textual.
-                """,
+# Ecuaciones y esquemas
+**Ecuación lineal:**
+- Forma: $ax + b = 0$
+- Solución: $x = -b/a$
+
+**Ecuación cuadrática:**
+- Forma: $ax^2 + bx + c = 0$
+- Solución:
+  $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+
+**Ejemplo práctico:**
+Resolver $x^2 - 4x + 3 = 0$:
+- $a = 1$, $b = -4$, $c = 3$
+- Discriminante: $\\Delta = (-4)^2 - 4 \\cdot 1 \\cdot 3 = 16 - 12 = 4$
+- Soluciones: $x = \\frac{4 \\pm \\sqrt{4}}{2} = \\frac{4 \\pm 2}{2}$, es decir, $x = 3$ o $x = 1$.
+        """,
                 1,
             ),
             (1, None, "Tema 2: Coherencia, cohesión y adecuación", "...", 1),

@@ -9,6 +9,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- MathJax 3 con configuración -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            startup: {
+                pageReady: function () {
+                    console.log("MathJax 3 listo");
+                    return MathJax.startup.defaultPageReady();
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 </head>
 
 <body>
@@ -45,6 +62,55 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        function toggleTema(contentDiv, temaId) {
+            console.log("toggleTema llamado con temaId:", temaId);
+            contentDiv.classList.toggle('hidden');
+            if (!contentDiv.classList.contains('hidden')) {
+                const element = document.getElementById(temaId);
+                console.log("Elemento encontrado:", element);
+                if (!element) {
+                    console.error("No se encontró el elemento con ID:", temaId);
+                    return;
+                }
+                const markdownContent = element.getAttribute('data-markdown');
+                console.log("MarkdownContent:", markdownContent);
+                if (markdownContent) {
+                    try {
+                        const htmlContent = marked.parse(markdownContent);
+                        console.log("HTML generado:", htmlContent);
+                        element.innerHTML = htmlContent;
+                        console.log("HTML insertado en el DOM");
+                        if (typeof MathJax !== 'undefined' && MathJax.typeset) {
+                            console.log("Renderizando con MathJax...");
+                            MathJax.typeset([element]);
+                            console.log("MathJax ejecutado");
+                        } else {
+                            console.log("MathJax no está listo, esperando...");
+                            setTimeout(() => {
+                                if (typeof MathJax !== 'undefined' && MathJax.typeset) {
+                                    console.log("Reintentando MathJax...");
+                                    MathJax.typeset([element]);
+                                    console.log("MathJax reintentado");
+                                } else {
+                                    console.error("MathJax no se cargó correctamente después de esperar");
+                                }
+                            }, 2000); // Aumentamos a 2 segundos
+                        }
+                    } catch (e) {
+                        console.error("Error al procesar Markdown o MathJax:", e);
+                    }
+                } else {
+                    console.log("No hay markdownContent para procesar");
+                }
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Marked:", typeof marked);
+            console.log("MathJax:", typeof MathJax);
+        });
+    </script>
+
 </body>
 
 </html>

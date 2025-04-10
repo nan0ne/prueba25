@@ -1,12 +1,13 @@
 <div class="card">
+    {% set tema_id = 'tema-' ~ tema['id'] %}
     <button
         class="w-full text-left p-4 font-semibold bg-[var(--secondary-bg)] rounded-t-md hover:bg-[var(--accent)] hover:text-white transition-colors duration-200"
-        onclick="this.nextElementSibling.classList.toggle('hidden')">
+        onclick="toggleTema(this.nextElementSibling, '{{ tema_id }}')">
         {{ tema['titulo'] }}
     </button>
     <div class="hidden p-4">
         <div class="tema-contenido prose dark:prose-invert max-w-none" id="tema-{{ tema['id'] }}"
-            data-markdown="{{ tema['contenido'] | escape }}"></div>
+            data-markdown="{{ tema['contenido'] | safe }}"></div>
         <div class="flex space-x-3 mt-4">
             <button class="btn btn-secondary export-pdf" data-tema-id="{{ tema['id'] }}"><i
                     class="fas fa-download mr-2"></i> Exportar a PDF</button>

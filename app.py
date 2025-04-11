@@ -282,7 +282,7 @@ def agregar_tema(asignatura_id):
         if titulo and contenido:
             with closing(get_db_connection()) as conn:
                 conn.execute(
-                    "INSERT INTO temas (asignatura_id, usuario_id, titulo, contenido, es_fijo) VALUES (?, ?, ?, ?)",
+                    "INSERT INTO temas (asignatura_id, usuario_id, titulo, contenido, es_fijo) VALUES (?, ?, ?, ?, ?)",
                     (asignatura_id, current_user.id, titulo, contenido, 0),
                 )
                 conn.commit()
@@ -317,7 +317,7 @@ def editar_tema(asignatura_id, tema_id):
             "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
         ).fetchone()
         tema_row = conn.execute(
-            "SELECT id, asignatura_id, usuario_id, Titulo, contenido, es_fijo temas WHERE id = ? AND asignatura_id = ?",
+            "SELECT id, asignatura_id, usuario_id, Titulo, contenido, es_fijo FROM temas WHERE id = ? AND asignatura_id = ?",
             (tema_id, asignatura_id),
         ).fetchone()
         if not asignatura_row or not tema_row:

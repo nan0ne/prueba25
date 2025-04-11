@@ -225,6 +225,29 @@ Resolver $x^2 - 4x + 3 = 0$:
             ),
             (1, None, "Tema 2: Coherencia, cohesión y adecuación", "...", 1),
             (2, None, "Tema: La Guerra Civil Española", "Causas y consecuencias...", 1),
+            (
+                5,
+                None,
+                "ecuaciones",
+                """
+# Ecuaciones y esquemas
+**Ecuación lineal:**
+- Forma: $ax + b = 0$
+- Solución: $x = -b/a$
+
+**Ecuación cuadrática:**
+- Forma: $ax^2 + bx + c = 0$
+- Solución:
+  $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+
+**Ejemplo práctico:**
+Resolver $x^2 - 4x + 3 = 0$:
+- $a = 1$, $b = -4$, $c = 3$
+- Discriminante: $\\Delta = (-4)^2 - 4 \\cdot 1 \\cdot 3 = 16 - 12 = 4$
+- Soluciones: $x = \\frac{4 \\pm \\sqrt{4}}{2} = \\frac{4 \\pm 2}{2}$, es decir, $x = 3$ o $x = 1$.
+        """,
+                1,
+            ),
         ]
         cursor.executemany(
             "INSERT OR IGNORE INTO temas (asignatura_id, usuario_id, titulo, contenido, es_fijo) VALUES (?, ?, ?, ?, ?)",

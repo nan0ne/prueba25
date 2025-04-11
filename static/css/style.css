@@ -441,3 +441,30 @@ textarea:focus {
         font-size: 0.75rem;
     }
 }
+
+mjx-container.MathJax {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 4px !important;
+}
+
+mjx-container.MathJax[display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 1em 0 !important;
+}
+
+p,
+li {
+    line-height: 1.5 !important;
+}
+
+img.mathjax-svg {
+    display: inline-block !important;
+    vertical-align: -0.2em !important;
+    /* Ajustar alineación vertical */
+    margin: 0 4px !important;
+    /* Aumentar separación lateral */
+    height: 1em !important;
+    /* Tamaño consistente para fórmulas inline */
+}

@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temas de {{ asignatura['nombre'] }}</title>
+    <title>Temas de {{ asignatura.nombre }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- MathJax 3 con configuración -->
     <script>
         window.MathJax = {
             tex: {
@@ -17,15 +16,161 @@
                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
                 processEscapes: true
             },
-            startup: {
-                pageReady: function () {
-                    console.log("MathJax 3 listo");
-                    return MathJax.startup.defaultPageReady();
-                }
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
             }
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        .tema-contenido ul {
+            margin-left: 1rem;
+            padding-left: 0.75rem;
+            list-style-type: disc;
+            margin-bottom: 0.75rem;
+        }
+
+        .tema-contenido ul ul {
+            list-style-type: circle;
+            margin-left: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .tema-contenido ul ul ul {
+            list-style-type: square;
+            margin-left: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .tema-contenido ol {
+            margin-left: 1rem;
+            padding-left: 0.75rem;
+            list-style-type: decimal;
+            margin-bottom: 0.75rem;
+        }
+
+        .tema-contenido ol ul,
+        .tema-contenido ol ol {
+            margin-left: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .tema-contenido li {
+            margin-bottom: 0.125rem;
+            /* Reducido */
+        }
+
+        .tema-contenido p {
+            margin-bottom: 0.5rem;
+            /* Reducido */
+        }
+
+        .tema-contenido h1,
+        .tema-contenido h2,
+        .tema-contenido h3 {
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tema-contenido {
+            line-height: 1.4;
+            /* Ligeramente más compacto */
+        }
+
+        [data-theme="dark"] .tema-contenido {
+            color: #e5e7eb;
+        }
+
+        [data-theme="dark"] .tema-contenido h1,
+        [data-theme="dark"] .tema-contenido h2,
+        [data-theme="dark"] .tema-contenido h3 {
+            color: #d1d5db;
+        }
+
+        /* Móviles */
+        @media (max-width: 640px) {
+
+            .tema-contenido ul,
+            .tema-contenido ol {
+                margin-left: 0.25rem;
+                /* 4px */
+                padding-left: 0.25rem;
+                /* 4px */
+            }
+
+            .tema-contenido ul ul,
+            .tema-contenido ol ul,
+            .tema-contenido ul ol,
+            .tema-contenido ol ol {
+                margin-left: 0.25rem;
+                padding-left: 0.25rem;
+            }
+
+            .tema-contenido {
+                font-size: 0.8rem;
+                /* Más pequeño */
+            }
+
+            .tema-contenido li {
+                margin-bottom: 0.1rem;
+                /* Más compacto */
+            }
+
+            .tema-contenido p {
+                margin-bottom: 0.4rem;
+            }
+        }
+
+        /* Ajustar prose */
+        .prose ul {
+            margin-left: 1rem !important;
+            padding-left: 0.75rem !important;
+            list-style-type: disc !important;
+        }
+
+        .prose ul ul {
+            list-style-type: circle !important;
+            margin-left: 0.75rem !important;
+            padding-left: 0.75rem !important;
+        }
+
+        .prose ul ul ul {
+            list-style-type: square !important;
+            margin-left: 0.75rem !important;
+            padding-left: 0.75rem !important;
+        }
+
+        .prose ol {
+            margin-left: 1rem !important;
+            padding-left: 0.75rem !important;
+            list-style-type: decimal !important;
+        }
+
+        @media (max-width: 640px) {
+
+            .prose ul,
+            .prose ol {
+                margin-left: 0.25rem !important;
+                padding-left: 0.25rem !important;
+            }
+
+            .prose ul ul,
+            .prose ol ul,
+            .prose ul ol,
+            .prose ol ol {
+                margin-left: 0.25rem !important;
+                padding-left: 0.25rem !important;
+            }
+
+            .prose li {
+                margin-bottom: 0.1rem !important;
+            }
+
+            .prose p {
+                margin-bottom: 0.4rem !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -33,9 +178,9 @@
     {% include '_sidebar.html' %}
     <main class="content">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-semibold">Temas de {{ asignatura['nombre'] }}</h1>
+            <h1 class="text-2xl font-semibold">Temas de {{ asignatura.nombre }}</h1>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('agregar_tema', asignatura_id=asignatura['id']) }}" class="btn btn-primary">
+            <a href="{{ url_for('agregar_tema', asignatura_id=asignatura.id) }}" class="btn btn-primary">
                 <i class="fas fa-plus mr-2"></i> Nuevo Tema
             </a>
             {% endif %}
@@ -64,53 +209,55 @@
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script>
         function toggleTema(contentDiv, temaId) {
-            console.log("toggleTema llamado con temaId:", temaId);
             contentDiv.classList.toggle('hidden');
             if (!contentDiv.classList.contains('hidden')) {
                 const element = document.getElementById(temaId);
-                console.log("Elemento encontrado:", element);
                 if (!element) {
                     console.error("No se encontró el elemento con ID:", temaId);
                     return;
                 }
                 const markdownContent = element.getAttribute('data-markdown');
-                console.log("MarkdownContent:", markdownContent);
                 if (markdownContent) {
                     try {
+                        marked.setOptions({
+                            breaks: true,
+                            gfm: true,
+                            pedantic: false,
+                            mangle: false,
+                            headerIds: false
+                        });
                         const htmlContent = marked.parse(markdownContent);
                         console.log("HTML generado:", htmlContent);
                         element.innerHTML = htmlContent;
-                        console.log("HTML insertado en el DOM");
-                        if (typeof MathJax !== 'undefined' && MathJax.typeset) {
-                            console.log("Renderizando con MathJax...");
-                            MathJax.typeset([element]);
-                            console.log("MathJax ejecutado");
+                        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                            MathJax.typesetPromise([element]).then(() => {
+                                console.log("MathJax renderizado para", temaId);
+                            }).catch(err => {
+                                console.error("Error en MathJax:", err);
+                            });
                         } else {
-                            console.log("MathJax no está listo, esperando...");
+                            console.log("MathJax no está listo, reintentando...");
                             setTimeout(() => {
-                                if (typeof MathJax !== 'undefined' && MathJax.typeset) {
-                                    console.log("Reintentando MathJax...");
-                                    MathJax.typeset([element]);
-                                    console.log("MathJax reintentado");
-                                } else {
-                                    console.error("MathJax no se cargó correctamente después de esperar");
+                                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                                    MathJax.typesetPromise([element]).then(() => {
+                                        console.log("MathJax renderizado tras reintento");
+                                    }).catch(err => {
+                                        console.error("Error en MathJax retry:", err);
+                                    });
                                 }
-                            }, 2000); // Aumentamos a 2 segundos
+                            }, 500);
                         }
                     } catch (e) {
-                        console.error("Error al procesar Markdown o MathJax:", e);
+                        console.error("Error al procesar Markdown:", e);
+                        element.innerHTML = '<p>Error al renderizar el contenido.</p>';
                     }
                 } else {
-                    console.log("No hay markdownContent para procesar");
+                    console.warn("No hay contenido Markdown para", temaId);
+                    element.innerHTML = '<p>Contenido no disponible.</p>';
                 }
             }
         }
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("Marked:", typeof marked);
-            console.log("MathJax:", typeof MathJax);
-        });
     </script>
-
 </body>
 
 </html>

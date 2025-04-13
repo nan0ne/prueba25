@@ -468,3 +468,38 @@ img.mathjax-svg {
     height: 1em !important;
     /* Tamaño consistente para fórmulas inline */
 }
+
+/* Reforzar estilos de listas */
+.tema-contenido ul,
+.tema-contenido ol {
+    list-style-type: none !important;
+    margin-left: 1rem;
+    padding-left: 0;
+    margin-bottom: 0.75rem;
+}
+
+.tema-contenido ul ul,
+.tema-contenido ol ol,
+.tema-contenido ul ol,
+.tema-contenido ol ul {
+    margin-left: 1rem;
+}
+
+.tema-contenido li {
+    margin-bottom: 0.25rem;
+}
+
+@media (max-width: 640px) {
+
+    .tema-contenido ul,
+    .tema-contenido ol {
+        margin-left: 0.5rem;
+    }
+
+    .tema-contenido ul ul,
+    .tema-contenido ol ol,
+    .tema-contenido ul ol,
+    .tema-contenido ol ul {
+        margin-left: 0.5rem;
+    }
+}

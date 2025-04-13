@@ -1,21 +1,20 @@
 <div class="card">
-    {% set tema_id = 'tema-' ~ tema['id'] %}
+    {% set tema_id = 'tema-' ~ tema.id %}
     <button
         class="w-full text-left p-4 font-semibold bg-[var(--secondary-bg)] rounded-t-md hover:bg-[var(--accent)] hover:text-white transition-colors duration-200"
         onclick="toggleTema(this.nextElementSibling, '{{ tema_id }}')">
-        {{ tema['titulo'] }}
+        {{ tema.titulo }}
     </button>
     <div class="hidden p-4">
-        <div class="tema-contenido prose dark:prose-invert max-w-none" id="tema-{{ tema['id'] }}"
-            data-markdown="{{ tema['contenido'] | safe }}"></div>
+        <div class="tema-contenido prose dark:prose-invert max-w-none" id="{{ tema_id }}"
+            data-markdown="{{ tema.contenido | e }}"></div>
         <div class="flex space-x-3 mt-4">
-            <button class="btn btn-secondary export-pdf" data-tema-id="{{ tema['id'] }}"><i
+            <button class="btn btn-secondary export-pdf" data-tema-id="{{ tema.id }}"><i
                     class="fas fa-download mr-2"></i> Exportar a PDF</button>
-            {% if tema['es_fijo'] == 0 and tema['usuario_id'] == current_user.id %}
-            <a href="{{ url_for('editar_tema', asignatura_id=asignatura['id'], tema_id=tema['id']) }}"
+            {% if tema.es_fijo == 0 and tema.usuario_id == current_user.id %}
+            <a href="{{ url_for('editar_tema', asignatura_id=asignatura.id, tema_id=tema.id) }}"
                 class="btn btn-primary"><i class="fas fa-edit mr-2"></i> Editar</a>
-            <form method="POST"
-                action="{{ url_for('eliminar_tema', asignatura_id=asignatura['id'], tema_id=tema['id']) }}"
+            <form method="POST" action="{{ url_for('eliminar_tema', asignatura_id=asignatura.id, tema_id=tema.id) }}"
                 onsubmit="return confirm('¿Seguro que quieres eliminar este tema?');">
                 <button type="submit" class="btn btn-danger"><i class="fas fa-trash mr-2"></i> Eliminar</button>
             </form>

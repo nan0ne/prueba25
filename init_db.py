@@ -187,7 +187,7 @@ def init_db():
                 None,
                 "Capítulo 1: ¿Qué es un texto?",
                 """
-## **I Definición de Texto**
+## **I. Definición de Texto**
 
 1. **Concepto**: Un texto es un acto de comunicación que transmite un mensaje coherente y autónomo entre un emisor y un receptor, con una intención comunicativa clara.
     - **Características principales**:
@@ -202,7 +202,159 @@ def init_db():
         - "Cierren la puerta" (una instrucción breve en un contexto específico).
     - **Complejos**:
         - Una novela como *Cien años de soledad* de Gabriel García Márquez, que narra generaciones de una familia con múltiples tramas.
-        - Un artículo científico que explica un experimento con datos y análisis detallados.
+        - Un ensayo filosófico como *El mundo de Sofía* de Jostein Gaarder, que explica conceptos abstractos
+        a través de una historia.
+        - Una noticia periodística que informa sobre un evento reciente, como "Terremoto de magnitud 6 sacude la costa
+        de Japón".
+    - **Ejemplo intermedio:** Un correo electrónico formal invitando a una reunión: "Estimados colegas, les
+    invitamos a la reunión del próximo lunes a las 10:00 para discutir el proyecto X. Saludos cordiales".
+
+## **II. Constituyentes del Texto**
+
+1. **Emisor o Productor:**
+    - **Definición:** Es quien produce el texto, ya sea un individuo (una persona que escribe una carta) o un 
+    colectivo (una organización como la Asamblea Constituyente que redacta una constitución).
+    - **Influencia del contexto:**
+        - **Tiempo:** El momento en que se emite el mensaje afecta su interpretación. Por ejemplo, "Nos veremos
+        mañana" depende del día en que se dice (si se dice un lunes, "mañana" es martes).
+        - **Espacio:** El lugar desde donde se emite también influye. Un cartel que dice "Prohibido estacionar
+        aquí" tiene sentido solo en el lugar donde está ubicado.
+    - **Ejemplo práctico:**
+        - Un discurso político emitido en 2020 durante la pandemia (como "Debemos quedarnos en casa") refleja
+        un contexto histórico específico que no sería igual en 2025.
+        - Una carta escrita por un estudiante desde España a un amigo en México incluirá referencias culturales
+        o geográficas específicas ("Hace frío en Madrid").
+
+2. **Receptor o Destinatario:**
+    - **Definición:** Es a quien va dirigido el mensaje, pudiendo ser específico (una persona concreta) o genérico
+    (un público amplio).
+    - **Tipos de receptores:**
+        - **Específico: Una carta dirigida a "Raúl" o un mensaje de texto a un amigo ("¿Nos vemos a las 6, Ana?").
+        - **Genérico:** Un libro dirigido a todos los lectores interesados (como *Harry Potter*), o un cartel público
+        ("No tirar basura").
+    - **Influencia en la interpretación:**
+        - Un receptor específico interpreta el mensaje según su relación con el emisor. Por ejemplo, en "Raul", te espero
+        en casa", Raúl sabe exactamente de qué casa se trata.
+        - Un receptor genérico debe inferir más. En un cartel que dice "Cuiden el parque", cada persona lo interpreta
+        según su contexto (un niño podría pensar en no ensuciar, un adulto en no dañar las plantas).
+    - **Ejemplo práctico:**
+        - Un anuncio de televisón que dice "¡Compra ahora!" está dirigido a un público genérico (consumidores),
+        pero cada persona lo interpretará según sus necesidades (alguien que necesita un teléfono no verá de forma
+        diferente a alguien que no).
+
+3. **Mensaje:**
+    - **Definición:** Es el contenido que se transmite, que puede ser simple o complejo, explícito o implícito.
+    - **Tipos de contenido:**
+        - **Explícito:** Información directa, como "Cierren la puerta" (una instrucción clara).
+        - **Implícito:** Información que se deduce del contexto, como "Hace frío" (puede implicar "Abrígate" o
+        "Cierra la ventana").
+    - **Variedad de mensajes:**
+        - **Simples:** "No corras" (una orden directa).
+        - **Complejos:** Un artículo periodístico que analiza las causas de la inflación, con datos, argumentos
+        y conclusiones.
+    - **Ejemplo práctico:**
+        - En un cuento infantil como *Caperucita Roja*, el mensaje explícito es la historia de una niña que visita
+        a su abuela, pero el mensaje implícito puede ser "No hagas caso a desconocidos".
+        - En un discurso político: "Es hora de un cambio" puede implicar críticas al gobierno actual y una
+        propuesta de nuevas políticas.
+
+## **III. Organización del Texto**
+
+1. **Microestructura:**
+    - **Definición:** Es el nivel más detallado del texto, que incluye el contenido explícito (lo que se dice
+    directamente) y el implícito (lo que se deduce del contexto).
+    - **Características:**
+        - Contiene las ideas específicas y los detalles del texto.
+        - Incluye información implícita que depende del contexto cultural, social o situacional.
+    - **Ejemplo práctico:**
+        - Texto: "Pedro envió una carta a María".
+            - **Explícito:** Pedro mandó una carta.
+            - **Implícito:** Probablemente usó el correo (en un contexto tradicional) o un correo electrónico (en 
+            un contexto moderno); María es alguien conocido para Pedro.
+        - En un diálogo: "Hace calor, ¿no?" puede implicar "Abre la ventana" o "Enciende el ventilador",
+        dependiendo del contexto.
+
+2. **Macroestructura:**
+    - **Definición:** Es un resumen que condensa las ideas esenciales del texto, eliminando detalles secundarios
+    y transformando la información en ideas generales.
+    - **Proceso para construirla:**
+        1. **Eliminar detalles no esenciales:** Por ejemplo, "Aparcó su coche grande y amarillo en la calle
+        principal" -> "Aparcó su coche".
+        2. **Transformar en ideas generales:** "Fui a la estación, compré un billete, esperé 20 minutos y subí
+        al tren" -> "Cogí un tren".
+    - **Variaciones según el propósito:**
+        - Para un examen, la macroestructura puede ser más breve y centrada en los puntos clave.
+        - Para una publicación, puede incluir más contexto para atraer al lector.
+    - **Ejemplo práctico:**
+        - Texto original: "María se levantó temprano, preparó café, leyó el periódico y salió a trabajar".
+            - Macroestructura: "María comenzó su día y fue a trabajar".
+        - Texto original: "El gobierno aprobó una ley que reduce los impuestos a las pequeñas empresas,
+        lo que beneficiará a miles de emprendedores en el país".
+            - Macroestructura: "El gobierno aprobó una ley para apoyar a las pequeñas empresas".
+
+3. **Superestructura:**
+    - **Deficinión:** Son las reglas o patrones que definen el género textual (narración, argumentación, 
+    descripción, etc.), influyendo en la estructura y la finalidad del texto.
+    - **Características:**
+        - Determina qúe elementos son **obligatorios** (esenciales para cumplir la finalidad del género) y 
+        cuáles son **opcionales** (pueden eliminarse sin afectar la esencia).
+        - Por ejemplo, en una narración la superestructura incluye planteamiento, nudo y desenlace; en una carta
+        formal, incluye saludo, cuerpo y despedida.
+    - **Ejemplo práctico:**
+        - **Género narrativo:** Una novela sigue la superestructura de planteamiento (presentación de personajes
+        y contexto), nudo (conflicto principal) y desenlace (resolución). En *El principito*, el planteamiento
+        es el encuentro del aviador con el principito, el nudo son sus aventuras, y el desenlace es su partida.
+        - **Género argumentativo:** Un ensayo tiene una tesis (idea principal), argumentos (razones que la apoyan)
+        y una conclusión. Por ejemplo, un ensayo sobre el cambio climático podría tener:
+            - Tesis: "El cambio climático requiere acción inmediata".
+            - Argumentos: Datos sobre el aumento de temperaturas, ejemplos de desastres naturales, citas de expertos.
+            - Conclusión: "Debemos reducir las emisiones CO2".
+        - **Género administrativo:** Una solicitud formal sigue una superestructura con saludo ("Estimado/a"), cuerpo
+        (motivo de la solicitud) y despedida ("Atentamente").
+
+## **IV. Importancia de los Niveles**
+
+- **Microestructura:**
+    - Es la base del contenido detallado, ya que incluye toda la información específica del texto.
+    - Permite entender los detalles y las implicaciones del mensaje.
+    - Ejemplo: En un cuento, la microestructura incluye las acciones específicas de los personajes ("El lobo
+    se disfrazó de abuela").
+- **Macroestructura:**
+    - Es clave para resumir y comprender el texto, ya que condensa las ideas principales.
+    - Ayuda a identificar el propósito del texto y a estudiarlo de forma eficiente.
+    - Ejemplo: La macroestructura de un artículo sobre reciclaje podría ser: "El reciclaje reduce la 
+    contaminación y ahorra recursos".
+- **Superestructura:**
+    - Guía la interpretación del texto al mostrar cómo está organizado según su género.
+    - Ayuda a identificar la intención comunicativa (informar, persuadir, narrar).
+    - Ejemplo: En un texto argumentativo, la superestructura permite reconocer la tesis y los argumentos,
+    mientras que en una narración ayuda a seguir la secuencia de eventos.
+""",
+                1,
+            ),
+            (
+                1,
+                None,
+                "Capítulo 2: Coherencia, cohesión y adecuación textuales",
+                """
+## **I. Introducción**
+
+- **Propósito:** Este capítulo explica las tres propiedades esenciales que hacen que un texto sea
+comunicativamente efectivo: **coherencia, cohesión y adecuación**.
+- **Importancia:** Estas propiedades garantizan que un texto sea comprensible, unitario y apropiado para su
+contexto, audiencia y propósito.
+- **Ejemplo introductorio:** Un texto como "Voy a la tienda porque se acabó el pan" es coherente (tiene
+sentido lógico), cohesionado (usa "porque" para conectar ideas) y adecuado (es un registro informal
+apropiado para una conversación cotidiana).
+
+## **II. Coherencia**
+
+1. **Definición:** La coherencia es la propiedad que asegura que un texto remita a una realidad verosímil, ya
+sea cotidiana, científica, literaria o ficticia, y que sus partes tengan sentido juntas.
+    - Un texto coherente no presenta contradicciones internas y se ajusta a las expectativas del receptor.
+2. **Condiciones de coherencia:**
+    - Ejemplo:
+
 """,
                 1,
             ),

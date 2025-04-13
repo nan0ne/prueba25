@@ -33,6 +33,7 @@ from datetime import datetime
 from contextlib import closing
 import socket
 from init_db import init_db, get_db_connection
+import markdown
 
 # Inicialización de la aplicación Flask
 app = Flask(__name__)
@@ -243,7 +244,15 @@ def mostrar_temas(asignatura_id):
             return redirect(url_for("index"))
         asignatura = dict(asignatura_row)
         temas = [
-            dict(row)
+            {
+                "id": row["id"],
+                "titulo": row["titulo"],
+                "contenido": markdown.markdown(
+                    row["contenido"], extensions=["extra", "fenced_code"]
+                ),
+                "usuario_id": row["usuario_id"],
+                "es_fijo": row["es_fijo"],
+            }
             for row in conn.execute(
                 "SELECT id, titulo, contenido, usuario_id, es_fijo FROM temas WHERE asignatura_id = ? ORDER BY id ASC",
                 (asignatura_id,),
@@ -317,7 +326,7 @@ def editar_tema(asignatura_id, tema_id):
             "SELECT id, nombre FROM asignaturas WHERE id = ?", (asignatura_id,)
         ).fetchone()
         tema_row = conn.execute(
-            "SELECT id, asignatura_id, usuario_id, Titulo, contenido, es_fijo FROM temas WHERE id = ? AND asignatura_id = ?",
+            "SELECT id, asignatura_id, usuario_id, titulo, contenido, es_fijo FROM temas WHERE id = ? AND asignatura_id = ?",
             (tema_id, asignatura_id),
         ).fetchone()
         if not asignatura_row or not tema_row:
@@ -372,7 +381,7 @@ def eliminar_tema(asignatura_id, tema_id):
         if not tema_row or (
             tema_row["usuario_id"] != current_user.id or tema_row["es_fijo"] == 1
         ):
-            flash("No tienes perminso para eliminar este tema.", "danger")
+            flash("No tienes permiso para eliminar este tema.", "danger")
         else:
             conn.execute(
                 "DELETE FROM temas WHERE id = ? AND usuario_id = ?",

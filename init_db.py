@@ -185,19 +185,25 @@ def init_db():
             (
                 1,
                 None,
-                "Tema 1: ¿Qué es un texto?",
+                "Capítulo 1: ¿Qué es un texto?",
                 """
-# Tema 1: ¿Qué es un texto?
-Un texto es un acto de comunicación que transmite un mensaje coherente y autónomo entre un emisor y un receptor, ya sea oral o escrito. No depende de su extensión, sino de su capacidad para ser interpretable (e.g., "¡Socorro!" o una novela).
-**Componentes clave:**
-- **Emisor**: Individuo o colectivo, influido por su tiempo y espacio.
-- **Receptor**: Específico o genérico.
-- **Mensaje**: Contenido variable en complejidad.
-**Niveles de análisis:**
-1. **Microestructura**: Detalles explícitos e implícitos.
-2. **Macroestructura**: Resumen de ideas esenciales.
-3. **Superestructura**: Reglas del género textual (narración, argumentación, etc.).
-                """,
+## **I Definición de Texto**
+
+1. **Concepto**: Un texto es un acto de comunicación que transmite un mensaje coherente y autónomo entre un emisor y un receptor, con una intención comunicativa clara.
+    - **Características principales**:
+        - Puede ser **oral** (una conversación, un discurso) o **escrito** (un libro, un correo).
+        - No depende de su **extensión**, sino de su capacidad para transmitir un mensaje interpretable. Un texto breve como "¡Socorro!" puede ser tan válido como una novela extensa.
+        - Debe ser **coherente** (tener sentido lógico) y **autónomo** (no depender de otro texto para ser comprendido).
+    - **Importancia de la intención comunicativa**: Todo texto tiene un propósito, como informar, persuadir, entretener o expresar emociones. Por ejemplo, un cartel que dice "Prohibido fumar" busca regular una conducta, mientras que un poema busca evocar sentimientos.
+
+2. **Ejemplos prácticos**:
+    - **Simples**:
+        - "¡Socorro!" (un grito pidiendo ayuda, claro y directo).
+        - "Cierren la puerta" (una instrucción breve en un contexto específico).
+    - **Complejos**:
+        - Una novela como *Cien años de soledad* de Gabriel García Márquez, que narra generaciones de una familia con múltiples tramas.
+        - Un artículo científico que explica un experimento con datos y análisis detallados.
+""",
                 1,
             ),
             (
